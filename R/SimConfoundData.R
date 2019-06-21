@@ -1,3 +1,4 @@
+#' @title SimConfoundData
 #' @description SimConfoundData simulates a vector of confounds from a given distribution
 #' @param n the sample size to use
 #' @param D the distribution function to draw from (eg D=rbinom), must take n (sample size) as first parameter
@@ -9,6 +10,7 @@ SimConfoundData <- function(n,D,...) {
   C <- D(n, ...)
 }
 
+#' @title SimSNPData
 #' @description SimSNPData simulates SNP differences. Wrapper for SimConfoundData
 #' @param n the sample size
 #' @param d the maximum number of SNP differences
