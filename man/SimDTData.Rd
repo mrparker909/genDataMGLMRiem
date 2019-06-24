@@ -4,18 +4,20 @@
 \alias{SimDTData}
 \title{SimDTData}
 \usage{
-SimDTData(C, P = NULL, V = NULL, noise = 1, Yvar = 1)
+SimDTData(C, P = NULL, V = NULL, di = 3, noise = 1, Yvar = 1)
 }
 \arguments{
-\item{C}{a kxN array of confounds (each row corresponds to a confound, each column to an N-vector of observations for the ith individual)}
+\item{C}{a kxN array of confounds (each row is an N-vector corresponding to aset of observations for one confound, each column to a k-vector of confound observations for the ith individual)}
 
 \item{P}{a SPD base point (identity matrix by default)}
 
 \item{V}{a 3x3xN array of coefficients for C (N-stack of symmetric 3x3 matrices, random by default)}
 
+\item{di}{tensor dimension will be di x di (for DT data, di=3)}
+
 \item{noise}{noise to add to generated Diffusion Tensor observations}
 
-\item{Yvar}{proportional to the variance of Y, the ground truth diffusion tensors}
+\item{Yvar}{proportional to the variance of base point for Ytrue, the ground truth diffusion tensors}
 }
 \description{
 Simulate Diffusion Tensor data with correlated confounds. The overall equation of interest is: Yobs = Exp(Exp(P,VC),eps). Returns a list containing: P (true base point for Y), C (confounds), V (true coefficients for C), Y (ground truth DT's, Y=VC), Yobs (observed, noisy DT's)
