@@ -13,4 +13,6 @@ Encoding: UTF-8
 LazyData: true
 Suggests: 
     testthat
+Requires:
+    MGLMRiem
 RoxygenNote: 6.1.1

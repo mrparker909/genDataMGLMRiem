@@ -9,7 +9,7 @@ SimSNPData(n, d, p = NULL)
 \arguments{
 \item{n}{the sample size}
 
-\item{d}{the maximum number of SNP differences}
+\item{d}{the maximum number of SNP differences (eg if d=3, there will be four SNP categoris: 0, 1, 2, or 3 SNP differences)}
 
 \item{p}{probability weights for each number of SNP differences}
 }
