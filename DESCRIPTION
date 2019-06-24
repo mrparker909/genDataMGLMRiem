@@ -13,9 +13,6 @@ Encoding: UTF-8
 LazyData: true
 Suggests: 
     testthat
-<<<<<<< HEAD
 Requires:
     MGLMRiem
-=======
->>>>>>> 93679521cd13ce5f799fd864b90b850f877c1ad3
 RoxygenNote: 6.1.1

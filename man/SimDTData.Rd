@@ -4,7 +4,6 @@
 \alias{SimDTData}
 \title{SimDTData}
 \usage{
-<<<<<<< HEAD
 SimDTData(C, P = NULL, V = NULL, di = 3, noise = 1, Yvar = 1)
 }
 \arguments{
@@ -22,10 +21,4 @@ SimDTData(C, P = NULL, V = NULL, di = 3, noise = 1, Yvar = 1)
 }
 \description{
 Simulate Diffusion Tensor data with correlated confounds. The overall equation of interest is: Yobs = Exp(Exp(P,VC),eps). Returns a list containing: P (true base point for Y), C (confounds), V (true coefficients for C), Y (ground truth DT's, Y=VC), Yobs (observed, noisy DT's)
-=======
-SimDTData()
-}
-\description{
-Simulate Diffusion Tensor data with correlated confounds.
->>>>>>> 93679521cd13ce5f799fd864b90b850f877c1ad3
 }
