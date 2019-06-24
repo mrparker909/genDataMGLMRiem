@@ -15,7 +15,7 @@ SimDTData(C, P = NULL, V = NULL, di = 3, noise = 1, Yvar = 1)
 
 \item{di}{tensor dimension will be di x di (for DT data, di=3)}
 
-\item{noise}{noise to add to generated Diffusion Tensor observations}
+\item{noise}{noise to add to generated Diffusion Tensor observations. The noise is the maximum allowed inner product of the error tensor with the observation.}
 
 \item{Yvar}{proportional to the variance of base point for Ytrue, the ground truth diffusion tensors}
 }

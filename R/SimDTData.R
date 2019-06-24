@@ -4,7 +4,7 @@
 #' @param P a SPD base point (identity matrix by default)
 #' @param V a 3x3xN array of coefficients for C (N-stack of symmetric 3x3 matrices, random by default)
 #' @param di tensor dimension will be di x di (for DT data, di=3)
-#' @param noise noise to add to generated Diffusion Tensor observations
+#' @param noise noise to add to generated Diffusion Tensor observations. The noise is the maximum allowed inner product of the error tensor with the observation.
 #' @param Yvar proportional to the variance of base point for Ytrue, the ground truth diffusion tensors
 #' @export
 SimDTData <- function(C,P=NULL,V=NULL,di=3,noise=1,Yvar=1) {
