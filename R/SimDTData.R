@@ -39,7 +39,7 @@ SimDTData <- function(C,P=NULL,V=NULL,di=3,noise=1,Yvar=1) {
     stop("V should be di x di x k (incorrect number (k) of confound coefficients (V))")
   }
 
-  if(any(MGLMRiem::sizeR(V,c(1,2)) != c(3,3))) {
+  if(any(MGLMRiem::sizeR(V,c(1,2)) != c(di,di))) {
     stop("V should be di x di x N (incorrect tensor size, should be di x di)")
   }
 
