@@ -1,4 +1,5 @@
 #' @title SimDTData
+<<<<<<< HEAD
 #' @description Simulate Diffusion Tensor data with correlated confounds. The overall equation of interest is: Yobs = Exp(Exp(P,VC),eps). Returns a list containing: P (true base point for Y), C (confounds), V (true coefficients for C), Y (ground truth DT's, Y=VC), Yobs (observed, noisy DT's)
 #' @param C a kxN array of confounds (each row is an N-vector corresponding to aset of observations for one confound, each column to a k-vector of confound observations for the ith individual)
 #' @param P a SPD base point (identity matrix by default)
@@ -65,3 +66,11 @@ SimDTData <- function(C,P=NULL,V=NULL,di=3,noise=1,Yvar=1) {
   return(list(Yobs=Ysample, Xobs=C, Ptrue=P, Vtrue=V, Ytrue=Y2))
 }
 
+=======
+#' @description Simulate Diffusion Tensor data with correlated confounds.
+#'
+#' @export
+SimDTData <- function() {
+
+}
+>>>>>>> 93679521cd13ce5f799fd864b90b850f877c1ad3
