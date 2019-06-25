@@ -4,7 +4,8 @@
 \alias{SimDTData}
 \title{SimDTData}
 \usage{
-SimDTData(C, P = NULL, V = NULL, di = 3, noise = 1, Yvar = 1)
+SimDTData(C, P = NULL, V = NULL, di = 3, noise = 1, Yvar = 1,
+  useProportionalNoise = T)
 }
 \arguments{
 \item{C}{a kxN array of confounds (each row is an N-vector corresponding to aset of observations for one confound, each column to a k-vector of confound observations for the ith individual)}
@@ -15,9 +16,11 @@ SimDTData(C, P = NULL, V = NULL, di = 3, noise = 1, Yvar = 1)
 
 \item{di}{tensor dimension will be di x di (for DT data, di=3)}
 
-\item{noise}{noise to add to generated Diffusion Tensor observations. The noise is the maximum allowed inner product of the error tensor with the observation.}
+\item{noise}{noise to add to generated Diffusion Tensor observations. The noise is the maximum allowed inner product of the error tensor with the observation tensor.}
 
 \item{Yvar}{proportional to the variance of base point for Ytrue, the ground truth diffusion tensors}
+
+\item{useProportionalNoise}{if TRUE, will scale the noise (resulting in noise proportional to the signal)}
 }
 \description{
 Simulate Diffusion Tensor data with correlated confounds. The overall equation of interest is: Yobs = Exp(Exp(P,VC),eps). Returns a list containing: P (true base point for Y), C (confounds), V (true coefficients for C), Y (ground truth DT's, Y=VC), Yobs (observed, noisy DT's)

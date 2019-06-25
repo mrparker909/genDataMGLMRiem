@@ -4,10 +4,11 @@
 #' @param P a SPD base point (identity matrix by default)
 #' @param V a 3x3xN array of coefficients for C (N-stack of symmetric 3x3 matrices, random by default)
 #' @param di tensor dimension will be di x di (for DT data, di=3)
-#' @param noise noise to add to generated Diffusion Tensor observations. The noise is the maximum allowed inner product of the error tensor with the observation.
+#' @param noise noise to add to generated Diffusion Tensor observations. The noise is the maximum allowed inner product of the error tensor with the observation tensor.
 #' @param Yvar proportional to the variance of base point for Ytrue, the ground truth diffusion tensors
+#' @param useProportionalNoise if TRUE, will scale the noise (resulting in noise proportional to the signal)
 #' @export
-SimDTData <- function(C,P=NULL,V=NULL,di=3,noise=1,Yvar=1) {
+SimDTData <- function(C,P=NULL,V=NULL,di=3,noise=1,Yvar=1, useProportionalNoise=T) {
   k <- nrow(C) # number of confounds
   N <- ncol(C) # sample size
 
@@ -55,8 +56,14 @@ SimDTData <- function(C,P=NULL,V=NULL,di=3,noise=1,Yvar=1) {
 
   # Generate Y Samples
   Ysample = array(0, dim=c(di,di, N)) #zeros(3,3,size(Y,3)*npairs);
-  for(j in 1:N) {
-    Ysample[,,j] = MGLMRiem::addnoise_spd(Y2[,,j],noise)
+  if(useProportionalNoise) {
+    for(j in 1:N) {
+      Ysample[,,j] = MGLMRiem::addrelnoise_spd(Y2[,,j],noise)
+    }
+  } else {
+    for(j in 1:N) {
+      Ysample[,,j] = MGLMRiem::addnoise_spd(Y2[,,j],noise)
+    }
   }
 
   if(MGLMRiem::isspd_mxstack(Ysample) != 1) { stop("spd stack contains non-spd matrix") }
