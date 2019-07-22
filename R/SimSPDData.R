@@ -1,6 +1,6 @@
 #' @title genSPDdata
 #' @description Generate random SPD data with covariates (1 covariate per SPD upper diagonal entry). Default covariate coefficient is beta_j=1. Control the signal to noise ratio via SNR. Noise is gaussian and uncorrelated. A dataframe containing N rows, and 1 column for each matrix upper diagonal entry, and 1 column for each corresponding covariate. Generates Y_dimsxdims, y1...y_(n_y), and x1...x_(n_y). The y subsript counts along rows (left to right) first, then moves down one row at a time (eg for dims=3 when the main diagonal is excluded, y1 = Y[1,2], y2=Y[1,3], y3=Y[2,3]).
-#' @return If C=NULL (no confounds), returns a data.frame with 2*n_y columns, and N rows. n_y is dims*(dims/2+1/2), or dims*(dims/2-1/2) depending on whether the main diagonal is included. Otherwise, returns a list with elements Y, X, V, P, and yx, where Y is the list of observed SPD matrices, X is the data.frame of k confounds (Nxk), V is the list of k SPD covariate matrices, P is the base point on the manifold, and yx is the data.frame of upper diagonal elements of Y (with each row corresponding to one observation Y[[i]]).
+#' @return If C=NULL (no confounds), returns a data.frame with 2*n_y columns, and N rows. n_y is dims*(dims/2+1/2), or dims*(dims/2-1/2) depending on whether the main diagonal is included. Otherwise, returns a list with elements Y, X, V, P, and yx, where Y is the array of observed SPD matrices, X is the data.frame of k confounds (Nxk), V is the list of k SPD covariate matrices, P is the base point on the manifold, and yx is the data.frame of upper diagonal elements of Y (with each row corresponding to one observation Y[[i]]).
 #' @param N       number of observations (N is the number of SPD matrices generated)
 #' @param dims    dimension of SPD matrices to generate
 #' @param maxDist maximum distance on the SPD manifold for the generated SPD matrices (measured from the identity matrix)
@@ -115,7 +115,6 @@ genSPDdata <- function(N=500, dims=5, maxDist = 1, SNR=1, includeDiagonal=F, bet
         for(col in (row):dims) {
           i=i+1
           y_df[,i] = unlist(lapply(Y, FUN = function(Y) {Y[row,col]}))
-          x_df[,i] = C%*%V
         }
       }
     } else {
@@ -127,7 +126,12 @@ genSPDdata <- function(N=500, dims=5, maxDist = 1, SNR=1, includeDiagonal=F, bet
       }
     }
 
-    return(list(Y=Y, X=C, V=V, P=P, y_upper=cbind(y_df)))
+    Yret = array(0, dim=c(dims,dims,N))
+    for(i in 1:N) {
+      Yret[,,i] = Y[[i]]
+    }
+
+    return(list(Y=Yret, X=C, V=V, P=P, y_upper=cbind(y_df)))
   }
 }
 
