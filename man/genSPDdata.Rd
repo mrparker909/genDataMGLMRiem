@@ -12,9 +12,9 @@ genSPDdata(N = 500, dims = 5, maxDist = 1, SNR = 1,
 
 \item{dims}{dimension of SPD matrices to generate}
 
-\item{maxDist}{maximum distance on the SPD manifold for the generated SPD matrices (measured from the identity matrix)}
+\item{maxDist}{If c is NULL, the maximum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).}
 
-\item{SNR}{Signal to Noise ratio (noise has standard deviation = 1/SNR)}
+\item{SNR}{Signal to Noise ratio (SNR=0.25 means the noise will be up to 4 times the magnitude of the signal).}
 
 \item{includeDiagonal}{If T, will include the diagonal entries of the SPD matrix. Otherwise will only include the uppder diagonal elements.}
 
