@@ -96,10 +96,12 @@ genSPDdata <- function(N=500, dims=5, maxDist = 1, SNR=1, includeDiagonal=F, bet
       Y2[,,i] = MGLMRiem::expmap_spd(P=Yp[,,1],X=Vtmp)
     }
 
+    Ybar = MGLMRiem::karcher_mean_spd(Y2, niter=15)
+
     # Add noise to Y Samples
     Ysample = array(0, dim=c(dims,dims, N))
     for(j in 1:N) {
-      Ysample[,,j] = MGLMRiem::addSNR_spd(Y2[,,j],SNR)
+      Ysample[,,j] = MGLMRiem::addSNR_spd(Y2[,,j],SNR, kMean=Ybar)
     }
 
     for(i in 1:N) {
