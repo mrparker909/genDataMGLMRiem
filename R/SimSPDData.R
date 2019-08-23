@@ -9,13 +9,14 @@
 #' @param C       If C is not NULL, this will be used to generate data under a Riemann Manifold model (Y ~ X*V), NOT a multivariate normal model. A kxN array of confounds (each row is an N-vector corresponding to a set of observations for one confound, each column corresponds to a k-vector of confound observations for the ith individual)
 #' @param P       If C is not NULL, P is the base point on the manifold from which V displaces (Y ~ exp_m(P,CV)), default is P=Identity matrix (dimension dims.
 #' @param maxDist If C is NULL, the maximum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).
+#' @param minDist If C is NULL, the minimum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).
 #' @examples
 #' set.seed(1234)
 #' g <- genSPDdata(N = 3, dims = 3, SNR = 2, C=matrix(c(1,2,1),ncol=3))
 #' g$Y[[1]]
 #' MGLMRiem::expmap_spd(g$P,g$X[1]*g$V)
 #' @export
-genSPDdata <- function(N=500, dims=5, maxDist = 1, SNR=1, includeDiagonal=F, beta=NULL, C=NULL, P=NULL) {
+genSPDdata <- function(N=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiagonal=F, beta=NULL, C=NULL, P=NULL) {
   if(dims < 2) stop("genDat: dims must be at least 2")
 
   # setup data structure
@@ -28,7 +29,7 @@ genSPDdata <- function(N=500, dims=5, maxDist = 1, SNR=1, includeDiagonal=F, bet
   Y <-list()
   if(is.null(C)) {
     # generate N random SPDs
-    for(i in 1:N) {Y[[i]] = MGLMRiem::randspd_FAST(n = dims, maxDist = maxDist)}
+    for(i in 1:N) {Y[[i]] = MGLMRiem::randspd_FAST(n = dims, maxDist = maxDist, minDist=minDist)}
 
     # extract y components
     i=0
@@ -75,7 +76,7 @@ genSPDdata <- function(N=500, dims=5, maxDist = 1, SNR=1, includeDiagonal=F, bet
 
     Yp[,,1] = P
     for(i in 1:k) {
-      Yp[,,i+1] = MGLMRiem::randspd_FAST(n = dims, maxDist = maxDist)
+      Yp[,,i+1] = MGLMRiem::randspd_FAST(n = dims, maxDist = maxDist, minDist=minDist)
     }
 
     #if(is.null(V)) { # generate random V
