@@ -8,7 +8,7 @@
 #' @param beta    If C is NULL, this will be used to generate data under a element-wise multivariate normal model (y1...yp ~ X*Beta), NOT a Riemann Manifold model. Vector of coefficients for the generated covariates. Default is rep(1, times=dims). If beta is too short, will be right padded with zeros. If beta is too long, will be right-truncated.
 #' @param C       If C is not NULL, this will be used to generate data under a Riemann Manifold model (Y ~ X*V), NOT a multivariate normal model. A kxN array of confounds (each row is an N-vector corresponding to a set of observations for one confound, each column corresponds to a k-vector of confound observations for the ith individual)
 #' @param P       If C is not NULL, P is the base point on the manifold from which V displaces (Y ~ exp_m(P,CV)), default is P=Identity matrix (dimension dims.
-#' @param maxDist If c is NULL, the maximum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).
+#' @param maxDist If C is NULL, the maximum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).
 #' @examples
 #' set.seed(1234)
 #' g <- genSPDdata(N = 3, dims = 3, SNR = 2, C=matrix(c(1,2,1),ncol=3))
