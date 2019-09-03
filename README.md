@@ -1,2 +1,2 @@
 # genDataMGLMRiem
-Generate data structures for use in testing theories regarding MGLMRiem
+Generate data structures for use with the package mrparker909/MGLMRiem.
