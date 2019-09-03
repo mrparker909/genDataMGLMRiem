@@ -1,14 +1,13 @@
 Package: genDataMGLMRiem
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Generates Symmetric Positive Definite matrix data from covariates. Meant for use with the package mrparker909/MGLMRiem.
+Version: 0.1.1
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Matthew",
+           family = "Parker",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: What license it uses
+           email = "mrparker909@gmail.com")
+Description: Generates SPD matrices with covariate dependencies. Useful for testing packages such as mrparker909/MGLMRiem, which work with SPD data.
+License: Apache 2.0
 Encoding: UTF-8
 LazyData: true
 Suggests: 

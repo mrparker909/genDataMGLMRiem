@@ -14,5 +14,5 @@ extractUT(Y, dims, includeDiagonal = F)
 \item{includeDiagonal}{if T, will return the diagonal elements as well as the upper triangular elements.}
 }
 \description{
-extract the upper triangular elements of an array of SPDs, return data.frame, each row belongs to one observation
+Extract the upper triangular elements of an array of SPDs, return data.frame, each row belongs to one observation. Traverses across columns, starting with row 1, moving right from the diagonal.
 }

@@ -3,7 +3,7 @@
 #' @return If C=NULL (no confounds), returns a data.frame with 2*n_y columns, and N rows. n_y is dims*(dims/2+1/2), or dims*(dims/2-1/2) depending on whether the main diagonal is included. Otherwise, returns a list with elements Y, X, V, P, and yx, where Y is the array of observed SPD matrices, X is the data.frame of k confounds (kxN), V is the list of k SPD covariate matrices, P is the base point on the manifold, and yx is the data.frame of upper diagonal elements of Y (with each row corresponding to one observation Y[[i]]).
 #' @param N       number of observations (N is the number of SPD matrices generated)
 #' @param dims    dimension of SPD matrices to generate
-#' @param SNR     Signal to Noise ratio (SNR=0.25 means the noise will be up to 4 times the magnitude of the signal). Note that the SNR is multiplied by the number of covariates (so that more significant covariates implies a larger signal).
+#' @param SNR     Signal to Noise ratio (SNR=0.25 means the noise will be up to 4 times the magnitude of the signal).
 #' @param includeDiagonal If T, will include the diagonal entries of the SPD matrix. Otherwise will only include the uppder diagonal elements.
 #' @param beta    If C is NULL, this will be used to generate data under a element-wise multivariate normal model (y1...yp ~ X*Beta), NOT a Riemann Manifold model. Vector of coefficients for the generated covariates. Default is rep(1, times=dims). If beta is too short, will be right padded with zeros. If beta is too long, will be right-truncated.
 #' @param C       If C is not NULL, this will be used to generate data under a Riemann Manifold model (Y ~ X*V), NOT a multivariate normal model. A kxN array of confounds (each row is an N-vector corresponding to a set of observations for one confound, each column corresponds to a k-vector of confound observations for the ith individual)
@@ -130,7 +130,7 @@ genSPDdata <- function(N=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiag
       Yret[,,i] = Y[[i]]
     }
 
-    return(list(Y=Yret, X=C, V=V, P=P, y_upper=cbind(y_df)))
+    return(list(Y=Yret, X=C, V=V, P=P, y_upper=cbind(y_df), Ygroundtruth=Y2))
   }
 }
 

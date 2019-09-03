@@ -4,7 +4,7 @@
 \alias{genSPDdata}
 \title{genSPDdata}
 \usage{
-genSPDdata(N = 500, dims = 5, maxDist = 1, SNR = 1,
+genSPDdata(N = 500, dims = 5, maxDist = 1, minDist = 0, SNR = 1,
   includeDiagonal = F, beta = NULL, C = NULL, P = NULL)
 }
 \arguments{
@@ -12,7 +12,9 @@ genSPDdata(N = 500, dims = 5, maxDist = 1, SNR = 1,
 
 \item{dims}{dimension of SPD matrices to generate}
 
-\item{maxDist}{If c is NULL, the maximum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).}
+\item{maxDist}{If C is NULL, the maximum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).}
+
+\item{minDist}{If C is NULL, the minimum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).}
 
 \item{SNR}{Signal to Noise ratio (SNR=0.25 means the noise will be up to 4 times the magnitude of the signal).}
 
@@ -25,7 +27,7 @@ genSPDdata(N = 500, dims = 5, maxDist = 1, SNR = 1,
 \item{P}{If C is not NULL, P is the base point on the manifold from which V displaces (Y ~ exp_m(P,CV)), default is P=Identity matrix (dimension dims.}
 }
 \value{
-If C=NULL (no confounds), returns a data.frame with 2*n_y columns, and N rows. n_y is dims*(dims/2+1/2), or dims*(dims/2-1/2) depending on whether the main diagonal is included. Otherwise, returns a list with elements Y, X, V, P, and yx, where Y is the array of observed SPD matrices, X is the data.frame of k confounds (Nxk), V is the list of k SPD covariate matrices, P is the base point on the manifold, and yx is the data.frame of upper diagonal elements of Y (with each row corresponding to one observation Y[[i]]).
+If C=NULL (no confounds), returns a data.frame with 2*n_y columns, and N rows. n_y is dims*(dims/2+1/2), or dims*(dims/2-1/2) depending on whether the main diagonal is included. Otherwise, returns a list with elements Y, X, V, P, and yx, where Y is the array of observed SPD matrices, X is the data.frame of k confounds (kxN), V is the list of k SPD covariate matrices, P is the base point on the manifold, and yx is the data.frame of upper diagonal elements of Y (with each row corresponding to one observation Y[[i]]).
 }
 \description{
 Generate random SPD data with covariates (1 covariate per SPD upper diagonal entry). Default covariate coefficient is beta_j=1. Control the signal to noise ratio via SNR. Noise is gaussian and uncorrelated. A dataframe containing N rows, and 1 column for each matrix upper diagonal entry, and 1 column for each corresponding covariate. Generates Y_dimsxdims, y1...y_(n_y), and x1...x_(n_y). The y subsript counts along rows (left to right) first, then moves down one row at a time (eg for dims=3 when the main diagonal is excluded, y1 = Y[1,2], y2=Y[1,3], y3=Y[2,3]).
