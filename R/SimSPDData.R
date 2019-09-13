@@ -10,7 +10,7 @@
 #' @param P       If C is not NULL, P is the base point on the manifold from which V displaces (Y ~ exp_m(P,CV)), default is P=Identity matrix (dimension dims.
 #' @param maxDist If C is NULL, the maximum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).
 #' @param minDist If C is NULL, the minimum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).
-#' @param corr    If corr=T, then the SPF matrices generated will be correlation matrices.
+#' @param corr    If corr=T, then the SPD matrices generated will be correlation matrices.
 #' @examples
 #' set.seed(1234)
 #' g <- genSPDdata(N = 3, dims = 3, SNR = 2, C=matrix(c(1,2,1),ncol=3))
@@ -88,9 +88,6 @@ genSPDdata <- function(N=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiag
       V = array(0, dim=c(dims,dims,k))
       for(j in 1:k) {
         V[,,j] = MGLMRiem::logmap_spd(Yp[,,1], Yp[,,j+1])
-        if(corr) {
-          V[,,j] = V[,,j] - diag(diag(V[,,j]))
-        }
       }
     #}
 
@@ -107,11 +104,15 @@ genSPDdata <- function(N=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiag
     # Add noise to Y Samples
     Ysample = array(0, dim=c(dims,dims, N))
     for(j in 1:N) {
-      Ysample[,,j] = MGLMRiem::addSNR_spd(Y2[,,j],SNR,num_cov=1, corr=corr)
+      Ysample[,,j] = MGLMRiem::addSNR_spd(Y2[,,j],SNR,num_cov=1)
     }
 
     for(i in 1:N) {
-      Y[[i]] = Ysample[,,i]
+      if(corr) {
+        Y[[i]] = cov2cor(Ysample[,,i])
+      } else {
+        Y[[i]] = Ysample[,,i]
+      }
     }
 
     # extract y components
