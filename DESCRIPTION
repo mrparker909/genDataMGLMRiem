@@ -1,6 +1,6 @@
 Package: genDataMGLMRiem
 Title: Generates Symmetric Positive Definite matrix data from covariates. Meant for use with the package mrparker909/MGLMRiem.
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: 
     person(given = "Matthew",
            family = "Parker",

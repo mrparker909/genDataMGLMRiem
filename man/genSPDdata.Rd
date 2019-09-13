@@ -5,7 +5,7 @@
 \title{genSPDdata}
 \usage{
 genSPDdata(N = 500, dims = 5, maxDist = 1, minDist = 0, SNR = 1,
-  includeDiagonal = F, beta = NULL, C = NULL, P = NULL)
+  includeDiagonal = F, beta = NULL, C = NULL, P = NULL, corr = F)
 }
 \arguments{
 \item{N}{number of observations (N is the number of SPD matrices generated)}
@@ -25,6 +25,8 @@ genSPDdata(N = 500, dims = 5, maxDist = 1, minDist = 0, SNR = 1,
 \item{C}{If C is not NULL, this will be used to generate data under a Riemann Manifold model (Y ~ X*V), NOT a multivariate normal model. A kxN array of confounds (each row is an N-vector corresponding to a set of observations for one confound, each column corresponds to a k-vector of confound observations for the ith individual)}
 
 \item{P}{If C is not NULL, P is the base point on the manifold from which V displaces (Y ~ exp_m(P,CV)), default is P=Identity matrix (dimension dims.}
+
+\item{corr}{If corr=T, then the SPF matrices generated will be correlation matrices.}
 }
 \value{
 If C=NULL (no confounds), returns a data.frame with 2*n_y columns, and N rows. n_y is dims*(dims/2+1/2), or dims*(dims/2-1/2) depending on whether the main diagonal is included. Otherwise, returns a list with elements Y, X, V, P, and yx, where Y is the array of observed SPD matrices, X is the data.frame of k confounds (kxN), V is the list of k SPD covariate matrices, P is the base point on the manifold, and yx is the data.frame of upper diagonal elements of Y (with each row corresponding to one observation Y[[i]]).

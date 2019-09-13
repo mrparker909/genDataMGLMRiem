@@ -10,13 +10,14 @@
 #' @param P       If C is not NULL, P is the base point on the manifold from which V displaces (Y ~ exp_m(P,CV)), default is P=Identity matrix (dimension dims.
 #' @param maxDist If C is NULL, the maximum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).
 #' @param minDist If C is NULL, the minimum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).
+#' @param corr    If corr=T, then the SPF matrices generated will be correlation matrices.
 #' @examples
 #' set.seed(1234)
 #' g <- genSPDdata(N = 3, dims = 3, SNR = 2, C=matrix(c(1,2,1),ncol=3))
 #' g$Y[[1]]
 #' MGLMRiem::expmap_spd(g$P,g$X[1]*g$V)
 #' @export
-genSPDdata <- function(N=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiagonal=F, beta=NULL, C=NULL, P=NULL) {
+genSPDdata <- function(N=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiagonal=F, beta=NULL, C=NULL, P=NULL, corr=F) {
   if(dims < 2) stop("genDat: dims must be at least 2")
 
   # setup data structure
@@ -30,6 +31,9 @@ genSPDdata <- function(N=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiag
   if(is.null(C)) {
     # generate N random SPDs
     for(i in 1:N) {Y[[i]] = MGLMRiem::randspd_FAST(n = dims, maxDist = maxDist, minDist=minDist)}
+    if(corr) {
+      for(i in 1:N) {Y[[i]] = cov2cor(Y[[i]])}
+    }
 
     # extract y components
     i=0
@@ -84,6 +88,9 @@ genSPDdata <- function(N=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiag
       V = array(0, dim=c(dims,dims,k))
       for(j in 1:k) {
         V[,,j] = MGLMRiem::logmap_spd(Yp[,,1], Yp[,,j+1])
+        if(corr) {
+          V[,,j] = V[,,j] - diag(diag(V[,,j]))
+        }
       }
     #}
 
@@ -100,7 +107,7 @@ genSPDdata <- function(N=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiag
     # Add noise to Y Samples
     Ysample = array(0, dim=c(dims,dims, N))
     for(j in 1:N) {
-      Ysample[,,j] = MGLMRiem::addSNR_spd(Y2[,,j],SNR,num_cov=1)
+      Ysample[,,j] = MGLMRiem::addSNR_spd(Y2[,,j],SNR,num_cov=1, corr=corr)
     }
 
     for(i in 1:N) {
