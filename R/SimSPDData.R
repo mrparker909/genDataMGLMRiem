@@ -25,7 +25,7 @@
 #' dat = genSPDdata(NUM=5, dims=3, SNR=1, C=C, nX=2)
 #'
 #' @export
-genSPDdata <- function(NUM=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiagonal=F, beta=NULL, C=NULL, nX=1, P=NULL, corr=F) {
+genSPDdata <- function(NUM=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiagonal=F, beta=NULL, C=NULL, X=NULL, P=NULL, corr=F) {
   if(dims < 2) stop("genDat: dims must be at least 2")
 
   # setup data structure
@@ -77,13 +77,11 @@ genSPDdata <- function(NUM=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDi
     return(list(Y=Y,yx=cbind(y_df,x_df)))
   } else {
     if(is.null(P)) { P = diag(dims) }
-    X = C[1:nX,]
     if(!is.matrix(X)) { X = matrix(X, nrow=1) }
-    C = C[(nX+1):nrow(C),]
     if(!is.matrix(C)) { C = matrix(C, nrow=1) }
+    nX <- nrow(X) # number of covariates
     nC <- nrow(C) # number of confounds
 
-    if(nX < 1) stop("X must be at least 1 for there to be a signal, set nX >= 1.")
     if(NUM !=ncol(C)) stop("C must be NULL, or number of columns of C must match sample size N.") # sample size
 
     spdDat = genSPD_SNR(d=dims, X=X, C=C, scale=1, SNR=SNR, bp=P, maxDist = maxDist, minDist=minDist)
