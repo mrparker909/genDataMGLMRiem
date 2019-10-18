@@ -7,6 +7,7 @@
 #' @param includeDiagonal If T, will include the diagonal entries of the SPD matrix. Otherwise will only include the uppder diagonal elements.
 #' @param beta    If C is NULL, this will be used to generate data under a element-wise multivariate normal model (y1...yp ~ X*Beta), NOT a Riemann Manifold model. Vector of coefficients for the generated covariates. Default is rep(1, times=dims). If beta is too short, will be right padded with zeros. If beta is too long, will be right-truncated.
 #' @param C       If C is not NULL, this will be used to generate data under a Riemann Manifold model (Y ~ X*V), NOT a multivariate normal model. A kxN array of confounds (each row is an N-vector corresponding to a set of observations for one confound, each column corresponds to a k-vector of confound observations for the ith individual)
+#' @param nX      If C is not NULL, this will split C into C[(nX+1):nrow(C),] (nC confounds) and X=C[1:nrow(nX),] (nX covariates).
 #' @param P       If C is not NULL, P is the base point on the manifold from which V displaces (Y ~ exp_m(P,CV)), default is P=Identity matrix (dimension dims.
 #' @param maxDist If C is NULL, the maximum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).
 #' @param minDist If C is NULL, the minimum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).
@@ -16,23 +17,30 @@
 #' g <- genSPDdata(N = 3, dims = 3, SNR = 2, C=matrix(c(1,2,1),ncol=3))
 #' g$Y[[1]]
 #' MGLMRiem::expmap_spd(g$P,g$X[1]*g$V)
+#'
+#' X = matrix(rnorm(10), nrow=2)
+#' M = matrix(rnorm(15), nrow=3)
+#' C = rbind(X,M)
+#'
+#' dat = genSPDdata(NUM=5, dims=3, SNR=1, C=C, nX=2)
+#'
 #' @export
-genSPDdata <- function(N=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiagonal=F, beta=NULL, C=NULL, P=NULL, corr=F) {
+genSPDdata <- function(NUM=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiagonal=F, beta=NULL, C=NULL, nX=1, P=NULL, corr=F) {
   if(dims < 2) stop("genDat: dims must be at least 2")
 
   # setup data structure
   n_y = ifelse(includeDiagonal, dims*(dims/2+1/2), dims*(dims/2-1/2))
-  y_df = data.frame(matrix(ncol=n_y,nrow=N))
+  y_df = data.frame(matrix(ncol=n_y,nrow=NUM))
   names(y_df) <- paste0("y",1:n_y)
-  x_df = data.frame(matrix(ncol=n_y,nrow=N))
+  x_df = data.frame(matrix(ncol=n_y,nrow=NUM))
   names(x_df) <- paste0("x",1:n_y)
 
   Y <-list()
   if(is.null(C)) {
-    # generate N random SPDs
-    for(i in 1:N) {Y[[i]] = MGLMRiem::randspd_FAST(n = dims, maxDist = maxDist, minDist=minDist)}
+    # generate NUM random SPDs
+    for(i in 1:NUM) {Y[[i]] = MGLMRiem::randspd_FAST(n = dims, maxDist = maxDist, minDist=minDist)}
     if(corr) {
-      for(i in 1:N) {Y[[i]] = cov2cor(Y[[i]])}
+      for(i in 1:NUM) {Y[[i]] = cov2cor(Y[[i]])}
     }
 
     # extract y components
@@ -54,7 +62,7 @@ genSPDdata <- function(N=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiag
     }
 
     # generate covariates
-    e = matrix(rnorm(n = n_y*N, mean = 0, sd = 1/SNR),ncol=n_y)
+    e = matrix(rnorm(n = n_y*NUM, mean = 0, sd = 1/SNR),ncol=n_y)
 
     if(is.null(beta)) { beta = rep(1, times=n_y) }
     if(length(beta) > n_y) { beta = beta[1:n_y] }
@@ -68,53 +76,18 @@ genSPDdata <- function(N=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiag
 
     return(list(Y=Y,yx=cbind(y_df,x_df)))
   } else {
-    k <- nrow(C) # number of confounds
-    if(N !=ncol(C)) stop("C must be NULL, or number of columns of C must match sample size N.") # sample size
+    if(is.null(P)) { P = diag(dims) }
+    X = C[1:nX,]
+    if(!is.matrix(X)) { X = matrix(X, nrow=1) }
+    C = C[(nX+1):nrow(C),]
+    if(!is.matrix(C)) { C = matrix(C, nrow=1) }
+    nC <- nrow(C) # number of confounds
 
-    # GENERATING N Diffusion Tensors (with dependence on confounds C)
-    # Yp = base point + k coefficients
-    Yp = array(0, dim=c(dims,dims,k+1))
+    if(nX < 1) stop("X must be at least 1 for there to be a signal, set nX >= 1.")
+    if(NUM !=ncol(C)) stop("C must be NULL, or number of columns of C must match sample size N.") # sample size
 
-    if(is.null(P)) {
-      P = diag(dims) # default base point is I_dimsxdims
-    }
-
-    Yp[,,1] = P
-    for(i in 1:k) {
-      Yp[,,i+1] = MGLMRiem::randspd_FAST(n = dims, maxDist = maxDist, minDist=minDist)
-    }
-
-    #if(is.null(V)) { # generate random V
-      # Tangent vectors, geodesic bases.
-      V = array(0, dim=c(dims,dims,k))
-      for(j in 1:k) {
-        V[,,j] = MGLMRiem::logmap_spd(Yp[,,1], Yp[,,j+1])
-      }
-    #}
-
-    # Generate Ground Truth Data
-    Y2 = array(0, dim=c(dims,dims, N))
-    for(i in 1:N) {
-      Vtmp = array(0, dim=c(dims,dims,1))
-      for(j in 1:k) {
-        Vtmp = Vtmp + MGLMRiem::aug3(V[,,j]*C[j,i])
-      }
-      Y2[,,i] = MGLMRiem::expmap_spd(P=Yp[,,1],X=Vtmp)
-    }
-
-    # Add noise to Y Samples
-    Ysample = array(0, dim=c(dims,dims, N))
-    for(j in 1:N) {
-      Ysample[,,j] = MGLMRiem::addNoise_spd2(Y2[,,j],SNR)
-    }
-
-    for(i in 1:N) {
-      if(corr) {
-        Y[[i]] = cov2cor(Ysample[,,i])
-      } else {
-        Y[[i]] = Ysample[,,i]
-      }
-    }
+    spdDat = genSPD_SNR(d=dims, X=X, C=C, scale=1, SNR=SNR, bp=P, maxDist = maxDist, minDist=minDist)
+    Y = spdDat$Y
 
     # extract y components
     i=0
@@ -122,24 +95,24 @@ genSPDdata <- function(N=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiag
       for(row in 1:(dims)) {
         for(col in (row):dims) {
           i=i+1
-          y_df[,i] = unlist(lapply(Y, FUN = function(Y) {Y[row,col]}))
+          y_df[,i] = unlist(Y[row,col,])
         }
       }
     } else {
       for(row in 1:(dims-1)) {
         for(col in (row+1):dims) {
           i=i+1
-          y_df[,i] = unlist(lapply(Y, FUN = function(Y) {Y[row,col]}))
+          y_df[,i] = unlist(Y[row,col,])
         }
       }
     }
 
-    Yret = array(0, dim=c(dims,dims,N))
-    for(i in 1:N) {
-      Yret[,,i] = Y[[i]]
-    }
+    # Yret = array(0, dim=c(dims,dims,NUM))
+    # for(i in 1:NUM) {
+    #   Yret[,,i] = Y[[i]]
+    # }
 
-    return(list(Y=Yret, X=C, V=V, P=P, y_upper=cbind(y_df), Ygroundtruth=Y2))
+    return(list(Y=Y, X=X, C=C, Vx=spdDat$Vx, Vc=spdDat$Vc, P=P, y_upper=cbind(y_df), Ygroundtruth=spdDat$Ygroundtruth))
   }
 }
 

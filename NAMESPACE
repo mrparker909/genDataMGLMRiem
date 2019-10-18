@@ -3,4 +3,5 @@
 export(SimConfoundData)
 export(SimSNPData)
 export(extractUT)
+export(genSPD_SNR)
 export(genSPDdata)

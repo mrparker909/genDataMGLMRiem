@@ -4,12 +4,11 @@
 \alias{genSPDdata}
 \title{genSPDdata}
 \usage{
-genSPDdata(N = 500, dims = 5, maxDist = 1, minDist = 0, SNR = 1,
-  includeDiagonal = F, beta = NULL, C = NULL, P = NULL, corr = F)
+genSPDdata(NUM = 500, dims = 5, maxDist = 1, minDist = 0,
+  SNR = 1, includeDiagonal = F, beta = NULL, C = NULL, nX = 1,
+  P = NULL, corr = F)
 }
 \arguments{
-\item{N}{number of observations (N is the number of SPD matrices generated)}
-
 \item{dims}{dimension of SPD matrices to generate}
 
 \item{maxDist}{If C is NULL, the maximum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).}
@@ -24,9 +23,13 @@ genSPDdata(N = 500, dims = 5, maxDist = 1, minDist = 0, SNR = 1,
 
 \item{C}{If C is not NULL, this will be used to generate data under a Riemann Manifold model (Y ~ X*V), NOT a multivariate normal model. A kxN array of confounds (each row is an N-vector corresponding to a set of observations for one confound, each column corresponds to a k-vector of confound observations for the ith individual)}
 
+\item{nX}{If C is not NULL, this will split C into C[(nX+1):nrow(C),] (nC confounds) and X=C[1:nrow(nX),] (nX covariates).}
+
 \item{P}{If C is not NULL, P is the base point on the manifold from which V displaces (Y ~ exp_m(P,CV)), default is P=Identity matrix (dimension dims.}
 
-\item{corr}{If corr=T, then the SPF matrices generated will be correlation matrices.}
+\item{corr}{If corr=T, then the SPD matrices generated will be correlation matrices.}
+
+\item{N}{number of observations (N is the number of SPD matrices generated)}
 }
 \value{
 If C=NULL (no confounds), returns a data.frame with 2*n_y columns, and N rows. n_y is dims*(dims/2+1/2), or dims*(dims/2-1/2) depending on whether the main diagonal is included. Otherwise, returns a list with elements Y, X, V, P, and yx, where Y is the array of observed SPD matrices, X is the data.frame of k confounds (kxN), V is the list of k SPD covariate matrices, P is the base point on the manifold, and yx is the data.frame of upper diagonal elements of Y (with each row corresponding to one observation Y[[i]]).
@@ -39,4 +42,11 @@ set.seed(1234)
 g <- genSPDdata(N = 3, dims = 3, SNR = 2, C=matrix(c(1,2,1),ncol=3))
 g$Y[[1]]
 MGLMRiem::expmap_spd(g$P,g$X[1]*g$V)
+
+X = matrix(rnorm(10), nrow=2)
+M = matrix(rnorm(15), nrow=3)
+C = rbind(X,M)
+
+dat = genSPDdata(NUM=5, dims=3, SNR=1, C=C, nX=2)
+
 }
