@@ -82,7 +82,8 @@ genSPDdata <- function(NUM=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDi
     nX <- nrow(X) # number of covariates
     nC <- nrow(C) # number of confounds
 
-    if(NUM !=ncol(C)) stop("C must be NULL, or number of columns of C must match sample size N.") # sample size
+    if(NUM !=ncol(C)) stop("C must be NULL, or number of columns of C must match sample size NUM.") # sample size
+    if(NUM !=ncol(X)) stop("X must be NULL, or number of columns of X must match sample size NUM.") # sample size
 
     spdDat = genSPD_SNR(d=dims, X=X, C=C, scale=1, SNR=SNR, bp=P, maxDist = maxDist, minDist=minDist)
     Y = spdDat$Y

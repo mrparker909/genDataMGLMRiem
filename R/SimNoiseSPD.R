@@ -29,6 +29,9 @@ genSPD_SNR <- function(d, X, C, scale=1, SNR=1, bp = NULL, maxDist=1.25, minDist
   Vx = MGLMRiem::randspd_FAST(n = d, NUM = nX, maxDist = maxDist, minDist = minDist)
   Vc = MGLMRiem::randspd_FAST(n = d, NUM = nC, maxDist = maxDist, minDist = minDist)
 
+  Vx = MGLMRiem::aug3(Vx)
+  Vc = MGLMRiem::aug3(Vc)
+
   # sum_k x_k * Vx_k
   xVx = array(0, dim = c(d,d,n))
   for(i in 1:n) {
