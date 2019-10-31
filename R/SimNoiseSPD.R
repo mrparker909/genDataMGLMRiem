@@ -9,9 +9,10 @@
 #' @param bp Base point on SPD manifold (default is Identity).
 #' @param maxDist maximum distance from bp for coefficient vectors.
 #' @param minDist minimum distance from bp for coefficient vectors.
+#' @param maximumSPDValue If not NULL, limits the maximum value that any entry in the SPD matrix can obtain.
 #' @examples
 #' @export
-genSPD_SNR <- function(d, X, C, scale=1, SNR=1, bp = NULL, maxDist=1.25, minDist=0.75) {
+genSPD_SNR <- function(d, X, C, scale=1, SNR=1, bp = NULL, maxDist=1.25, minDist=0.75, maximumSPDValue=NULL) {
   n = sizeR(X,2)
 
   if(is.null(bp)) {
@@ -26,8 +27,8 @@ genSPD_SNR <- function(d, X, C, scale=1, SNR=1, bp = NULL, maxDist=1.25, minDist
   nC = nrow(C) # number of confounds
 
   # Vx and Vc are coefficient matrices
-  Vx = MGLMRiem::randspd_FAST(n = d, NUM = nX, maxDist = maxDist, minDist = minDist)
-  Vc = MGLMRiem::randspd_FAST(n = d, NUM = nC, maxDist = maxDist, minDist = minDist)
+  Vx = MGLMRiem::randspd_FAST(n = d, NUM = nX, maxDist = maxDist, minDist = minDist, maximumSPDValue=maximumSPDValue)
+  Vc = MGLMRiem::randspd_FAST(n = d, NUM = nC, maxDist = maxDist, minDist = minDist, maximumSPDValue=maximumSPDValue)
 
   Vx = MGLMRiem::aug3(Vx)
   Vc = MGLMRiem::aug3(Vc)

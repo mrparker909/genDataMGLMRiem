@@ -12,6 +12,7 @@
 #' @param maxDist If C is NULL, the maximum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).
 #' @param minDist If C is NULL, the minimum distance on the SPD manifold between response values. If C is not NULL, maximum distance on the SPD manifold for the generated SPD matrices for the covariate coefficients, V (distance measured from P).
 #' @param corr    If corr=T, then the SPD matrices generated will be correlation matrices.
+#' @param maximumSPDValue If not NULL, determines the maximum value that any entry in the SPD matrix can obtain.
 #' @examples
 #' set.seed(1234)
 #' g <- genSPDdata(NUM = 3, dims = 3, SNR = 2, C=matrix(c(1,2,1),ncol=3))
@@ -25,7 +26,7 @@
 #' dat = genSPDdata(NUM=5, dims=3, SNR=1, C=C, nX=2)
 #'
 #' @export
-genSPDdata <- function(NUM=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiagonal=F, beta=NULL, C=NULL, X=NULL, P=NULL, corr=F) {
+genSPDdata <- function(NUM=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDiagonal=F, beta=NULL, C=NULL, X=NULL, P=NULL, corr=F, maximumSPDValue=NULL) {
   if(dims < 2) stop("genDat: dims must be at least 2")
 
   # setup data structure
@@ -38,7 +39,7 @@ genSPDdata <- function(NUM=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDi
   Y <-list()
   if(is.null(C)) {
     # generate NUM random SPDs
-    for(i in 1:NUM) {Y[[i]] = MGLMRiem::randspd_FAST(n = dims, maxDist = maxDist, minDist=minDist)}
+    for(i in 1:NUM) {Y[[i]] = MGLMRiem::randspd_FAST(n = dims, maxDist = maxDist, minDist=minDist, maximumSPDValue)}
     if(corr) {
       for(i in 1:NUM) {Y[[i]] = cov2cor(Y[[i]])}
     }
@@ -85,7 +86,7 @@ genSPDdata <- function(NUM=500, dims=5, maxDist = 1, minDist=0, SNR=1, includeDi
     if(NUM !=ncol(C)) stop("C must be NULL, or number of columns of C must match sample size NUM.") # sample size
     if(NUM !=ncol(X)) stop("X must be NULL, or number of columns of X must match sample size NUM.") # sample size
 
-    spdDat = genSPD_SNR(d=dims, X=X, C=C, scale=1, SNR=SNR, bp=P, maxDist = maxDist, minDist=minDist)
+    spdDat = genSPD_SNR(d=dims, X=X, C=C, scale=1, SNR=SNR, bp=P, maxDist = maxDist, minDist=minDist,maximumSPDValue)
     Y = spdDat$Y
 
     # extract y components

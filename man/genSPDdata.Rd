@@ -6,7 +6,7 @@
 \usage{
 genSPDdata(NUM = 500, dims = 5, maxDist = 1, minDist = 0,
   SNR = 1, includeDiagonal = F, beta = NULL, C = NULL, X = NULL,
-  P = NULL, corr = F)
+  P = NULL, corr = F, maximumSPDValue = NULL)
 }
 \arguments{
 \item{NUM}{number of observations (NUM is the number of SPD matrices generated)}
@@ -30,6 +30,8 @@ genSPDdata(NUM = 500, dims = 5, maxDist = 1, minDist = 0,
 \item{P}{If C is not NULL, P is the base point on the manifold from which V displaces (Y ~ exp_m(P,CV)), default is P=Identity matrix (dimension dims.}
 
 \item{corr}{If corr=T, then the SPD matrices generated will be correlation matrices.}
+
+\item{maximumSPDValue}{If not NULL, determines the maximum value that any entry in the SPD matrix can obtain.}
 }
 \value{
 If C=NULL (no confounds), returns a data.frame with 2*n_y columns, and N rows. n_y is dims*(dims/2+1/2), or dims*(dims/2-1/2) depending on whether the main diagonal is included. Otherwise, returns a list with elements Y, X, V, P, and yx, where Y is the array of observed SPD matrices, X is the data.frame of k confounds (kxN), V is the list of k SPD covariate matrices, P is the base point on the manifold, and yx is the data.frame of upper diagonal elements of Y (with each row corresponding to one observation Y[[i]]).

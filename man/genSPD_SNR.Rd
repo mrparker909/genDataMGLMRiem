@@ -5,7 +5,7 @@
 \title{genSPD_SNR}
 \usage{
 genSPD_SNR(d, X, C, scale = 1, SNR = 1, bp = NULL, maxDist = 1.25,
-  minDist = 0.75)
+  minDist = 0.75, maximumSPDValue = NULL)
 }
 \arguments{
 \item{d}{Dimension of SPD matrices to generate.}
@@ -23,6 +23,8 @@ genSPD_SNR(d, X, C, scale = 1, SNR = 1, bp = NULL, maxDist = 1.25,
 \item{maxDist}{maximum distance from bp for coefficient vectors.}
 
 \item{minDist}{minimum distance from bp for coefficient vectors.}
+
+\item{maximumSPDValue}{If not NULL, limits the maximum value that any entry in the SPD matrix can obtain.}
 }
 \description{
 Generates SPD matrices with noise from covariates X, confound C, with signal to noise ratio SNR.
