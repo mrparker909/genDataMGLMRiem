@@ -30,9 +30,11 @@ genSPD_SNR <- function(d, X, C, scale=1, SNR=1, bp = NULL, maxDist=1.25, minDist
   Px = MGLMRiem::randspd_FAST(n = d, NUM = nX+1, maxDist = maxDist, minDist = minDist, maximumSPDValue=maximumSPDValue)
   Pc = MGLMRiem::randspd_FAST(n = d, NUM = nC+1, maxDist = maxDist, minDist = minDist, maximumSPDValue=maximumSPDValue)
 
+  Vx = array(0, dim = c(d,d,nX))
   for(i in 1:nX) {
     Vx[,,i] = MGLMRiem::logmap_spd(Px[,,i],Px[,,i+1])
   }
+  Vc = array(0, dim = c(d,d,nC))
   for(i in 1:nC) {
     Vc[,,i] = MGLMRiem::logmap_spd(Pc[,,i],Pc[,,i+1])
   }
