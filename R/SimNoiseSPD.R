@@ -27,8 +27,15 @@ genSPD_SNR <- function(d, X, C, scale=1, SNR=1, bp = NULL, maxDist=1.25, minDist
   nC = nrow(C) # number of confounds
 
   # Vx and Vc are coefficient matrices
-  Vx = MGLMRiem::randspd_FAST(n = d, NUM = nX, maxDist = maxDist, minDist = minDist, maximumSPDValue=maximumSPDValue)
-  Vc = MGLMRiem::randspd_FAST(n = d, NUM = nC, maxDist = maxDist, minDist = minDist, maximumSPDValue=maximumSPDValue)
+  Px = MGLMRiem::randspd_FAST(n = d, NUM = nX+1, maxDist = maxDist, minDist = minDist, maximumSPDValue=maximumSPDValue)
+  Pc = MGLMRiem::randspd_FAST(n = d, NUM = nC+1, maxDist = maxDist, minDist = minDist, maximumSPDValue=maximumSPDValue)
+
+  for(i in 1:nX) {
+    Vx[,,i] = MGLMRiem::logmap_spd(Px[,,i],Px[,,i+1])
+  }
+  for(i in 1:nC) {
+    Vc[,,i] = MGLMRiem::logmap_spd(Pc[,,i],Pc[,,i+1])
+  }
 
   Vx = MGLMRiem::aug3(Vx)
   Vc = MGLMRiem::aug3(Vc)
